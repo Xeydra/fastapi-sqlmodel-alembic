@@ -1,16 +1,14 @@
 from sqlmodel import SQLModel, Field
-from typing import Optional
 
 
-class SongBase(SQLModel):
-    name: str
-    artist: str
-    year: Optional[int] = None
+class InputTypeBase(SQLModel):
+    id: str
+    label: str
+    techId: str
 
-
-class Song(SongBase, table=True):
+class InputType(InputTypeBase, table=True):
     id: int = Field(default=None, nullable=False, primary_key=True)
 
 
-class SongCreate(SongBase):
+class InputTypeCreate(InputTypeBase):
     pass

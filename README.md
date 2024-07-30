@@ -22,3 +22,17 @@ $ curl -d '{"name":"Midnight Fit", "artist":"Mogwai", "year":"2021"}' -H "Conten
 ```
 
 Get all songs: [http://localhost:8004/songs](http://localhost:8004/songs)
+
+
+# Open psql:
+docker-compose exec db psql --username=postgres --dbname=foo
+\dt
+
+# Migrations
+Create:
+docker-compose exec web alembic revision --autogenerate -m "commit message"
+
+Run:
+docker-compose exec web alembic upgrade head
+
+
