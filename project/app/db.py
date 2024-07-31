@@ -8,11 +8,13 @@ from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = AsyncEngine(create_engine(DATABASE_URL, echo=True, future=True))
+# echo: print all sql statements, probably remove in production
+# sqlmodels create engine same as sqlalchemys, just that future=true is default
+engine = AsyncEngine(create_engine(DATABASE_URL, echo=True))
 
+# here all models are created
 async def init_db():
     async with engine.begin() as conn:
-        # await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
 
 
