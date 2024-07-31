@@ -1,7 +1,8 @@
 import os
 
 from sqlmodel import SQLModel, create_engine
-from sqlmodel.ext.asyncio.session import AsyncSession, AsyncEngine
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from sqlalchemy.orm import sessionmaker
 
@@ -10,7 +11,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 # echo: print all sql statements, probably remove in production
 # sqlmodels create engine same as sqlalchemys, just that future=true is default
-engine = AsyncEngine(create_engine(DATABASE_URL, echo=True))
+engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
 # here all models are created
 async def init_db():

@@ -1,8 +1,8 @@
 """init_color
 
-Revision ID: e1dbacf6cb8a
-Revises: fe89497a714d
-Create Date: 2024-07-31 08:42:52.428739
+Revision ID: 2069f24e6d98
+Revises: 600f6fdd86ae
+Create Date: 2024-07-31 09:08:04.225746
 
 """
 from alembic import op
@@ -13,8 +13,8 @@ from app.models import InputType, UserQuestion
 
 
 # revision identifiers, used by Alembic.
-revision = 'e1dbacf6cb8a'
-down_revision = 'fe89497a714d'
+revision = '2069f24e6d98'
+down_revision = '600f6fdd86ae'
 branch_labels = None
 depends_on = None
 

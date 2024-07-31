@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.db import get_session
-from app.models import InputType, UserDataColor
+from app.models import UserDataColor, UserDataColorCreate
 
 app = FastAPI()
 
@@ -18,8 +18,14 @@ async def get_user_datas(session: AsyncSession = Depends(get_session)):
     userDatas = result.all()
     return userDatas
 
-# @app.post("/userData", response_model=UserDataColor)
-# async def post_user_data(session: AsyncSession = Depends(get_session)):
+@app.post("/userData", response_model=UserDataColor)
+async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):
+    db_userDataCreate = UserDataColor.model_validate(userDataCreate)
+    session.add(db_userDataCreate)
+    await session.commit()
+    await session.refresh(db_userDataCreate)
+    return db_userDataCreate
+
 
 
 # see https://sqlmodel.tiangolo.com/tutorial/automatic-id-none-refresh/

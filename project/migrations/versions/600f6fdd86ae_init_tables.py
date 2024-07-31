@@ -1,8 +1,8 @@
 """init_tables
 
-Revision ID: fe89497a714d
+Revision ID: 600f6fdd86ae
 Revises: 
-Create Date: 2024-07-31 08:30:33.903852
+Create Date: 2024-07-31 09:07:40.088770
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlmodel             # NEW
 
 
 # revision identifiers, used by Alembic.
-revision = 'fe89497a714d'
+revision = '600f6fdd86ae'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,13 +39,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('userdatacolor',
-    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('value', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('for_date', sa.DateTime(), nullable=False),
+    sa.Column('user_question_id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
-    sa.Column('user_question_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_question_id'], ['userquestion.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
