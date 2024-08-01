@@ -10,6 +10,13 @@ class QuestionType(SQLModel, table=True):
 
     user_questions: list["UserQuestion"] = Relationship(back_populates="question_type")
 
+class Color(SQLModel, table=True):
+    id: int | None = Field(default=None, nullable=False, primary_key=True)
+    label: str | None
+    color: str = Field(..., index=True, unique=True, regex=r'^#[0-9A-Fa-f]{6}$')
+    created_at: datetime = Field(default=datetime.now(), nullable=False)
+    deleted_at: datetime | None = Field(default=None)
+
 class UserQuestion(SQLModel, table=True):
     id: int | None = Field(default=None, nullable=False, primary_key=True)
     question_text: str
