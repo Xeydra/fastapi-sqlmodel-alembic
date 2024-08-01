@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.db import get_session
-from app.models import UserDataColor, UserDataColorCreate
+from app.models import UserDataColor, UserDataColorCreate, UserQuestion
 
 app = FastAPI()
 
@@ -11,6 +11,12 @@ app = FastAPI()
 async def pong():
     return {"ping": "pong!"}
 
+
+@app.get("/userQuestion", response_model=list[UserQuestion])
+async def get_user_questions(session: AsyncSession = Depends(get_session)):
+    result = await session.exec(select(UserQuestion))
+    userQuestions = result.all()
+    return userQuestions
 
 @app.get("/userDatas", response_model=list[UserDataColor])
 async def get_user_datas(session: AsyncSession = Depends(get_session)):
