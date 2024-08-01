@@ -1,20 +1,20 @@
 """init_color
 
-Revision ID: 2069f24e6d98
-Revises: 600f6fdd86ae
-Create Date: 2024-07-31 09:08:04.225746
+Revision ID: d86578ee52c9
+Revises: 6497d9a31dc6
+Create Date: 2024-08-01 08:09:26.533854
 
 """
 from alembic import op
-from sqlalchemy.orm import Session
 import sqlalchemy as sa
 import sqlmodel             # NEW
-from app.models import InputType, UserQuestion
+from sqlalchemy.orm import Session
+from app.models import QuestionType, UserQuestion
 
 
 # revision identifiers, used by Alembic.
-revision = '2069f24e6d98'
-down_revision = '600f6fdd86ae'
+revision = 'd5919d28a62a'
+down_revision = 'e78b1e2af183'
 branch_labels = None
 depends_on = None
 
@@ -24,10 +24,10 @@ def upgrade() -> None:
     bind = op.get_bind()
     session = Session(bind=bind)
 
-    inputType = InputType(tech_id="color_picker", label='Farbwähler')
-    userQuestion = UserQuestion(question_text="Wie fühlst du dich heute?", input_type=inputType)
+    questionType = QuestionType(tech_id="color_picker", label='Farbwähler')
+    userQuestion = UserQuestion(question_text="Wie fühlst du dich heute?", question_type=questionType)
     
-    session.add(inputType)
+    session.add(questionType)
     session.add(userQuestion)
     session.commit()
     pass
@@ -40,7 +40,7 @@ def downgrade() -> None:
     session = Session(bind=bind)
 
     session.query(UserQuestion).delete()
-    session.query(InputType).delete()
+    session.query(QuestionType).delete()
     session.commit()
     pass
     # ### end Alembic commands ###
