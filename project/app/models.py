@@ -61,3 +61,4 @@ class UserDataColor(UserDataBase, table=True):
 
 # List of all UserQuestion Models:
 userQuestionModels: list[type[UserQuestionBase]] = [UserQuestionColor]
+userDataModels: list[type[UserDataBase]] = [UserDataColor]

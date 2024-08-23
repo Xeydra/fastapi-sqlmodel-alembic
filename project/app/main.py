@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.db import get_session
-from app.models import UserDataBase, UserQuestionBase, userQuestionModels
+from app.models import UserDataBase, UserQuestionBase, userQuestionModels, userDataModels
 
 app = FastAPI()
 
@@ -16,15 +16,17 @@ async def pong():
 async def get_user_questions(session: AsyncSession = Depends(get_session)):
     all_entries = []
     for model in userQuestionModels:
-        result = await session.exec(select(model)).all()
-        all_entries.extend(result)
+        result = await session.exec(select(model))
+        all_entries.extend(result.all())
     return all_entries
 
 @app.get("/userDatas", response_model=list[UserDataBase])
 async def get_user_datas(session: AsyncSession = Depends(get_session)):
-    result = await session.exec(select(UserDataBase))
-    userDatas = result.all()
-    return userDatas
+    all_entries = []
+    for model in userDataModels:
+        result = await session.exec(select(model))
+        all_entries.extend(result.all())
+    return all_entries
 
 # @app.post("/userData", response_model=UserDataBase)
 # async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):
