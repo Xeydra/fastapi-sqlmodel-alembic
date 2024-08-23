@@ -37,3 +37,18 @@ docker-compose exec web alembic upgrade head
 
 # Documentation
 docker run --rm --network fastapi-sqlmodel-alembic_default -v ${PWD}:/work -w /work k1low/tbls doc postgresql://postgres:postgres@db:5432/foo?sslmode=disable
+
+
+# ToDos
+23.08:
+- Create Colors & initial UserQuestion with Script
+- getting UserQuestion, is answerSet returned?
+- create UserQuestion Models & Endpoint
+- create UserData Models & Endpoint
+- get UserData Models & Endpoint
+...
+- Auth:
+    - Tables
+    - Library
+    - Login ermöglichen & Überlegen
+--> Frontend!
