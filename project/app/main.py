@@ -3,7 +3,7 @@ from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.db import get_session
-from app.models import UserDataColor, UserDataColorCreate, UserQuestion
+from app.models import UserDataBase, UserQuestionBase, userQuestionModels
 
 app = FastAPI()
 
@@ -12,25 +12,27 @@ async def pong():
     return {"ping": "pong!"}
 
 
-@app.get("/userQuestion", response_model=list[UserQuestion])
+@app.get("/userQuestions", response_model=list[UserQuestionBase])
 async def get_user_questions(session: AsyncSession = Depends(get_session)):
-    result = await session.exec(select(UserQuestion))
-    userQuestions = result.all()
-    return userQuestions
+    all_entries = []
+    for model in userQuestionModels:
+        result = await session.exec(select(model)).all()
+        all_entries.extend(result)
+    return all_entries
 
-@app.get("/userDatas", response_model=list[UserDataColor])
+@app.get("/userDatas", response_model=list[UserDataBase])
 async def get_user_datas(session: AsyncSession = Depends(get_session)):
-    result = await session.exec(select(UserDataColor))
+    result = await session.exec(select(UserDataBase))
     userDatas = result.all()
     return userDatas
 
-@app.post("/userData", response_model=UserDataColor)
-async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):
-    db_userDataCreate = UserDataColor.model_validate(userDataCreate)
-    session.add(db_userDataCreate)
-    await session.commit()
-    await session.refresh(db_userDataCreate)
-    return db_userDataCreate
+# @app.post("/userData", response_model=UserDataBase)
+# async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):
+#     db_userDataCreate = UserDataBase.model_validate(userDataCreate)
+#     session.add(db_userDataCreate)
+#     await session.commit()
+#     await session.refresh(db_userDataCreate)
+#     return db_userDataCreate
 
 
 

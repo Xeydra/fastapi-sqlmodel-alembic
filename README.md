@@ -35,4 +35,5 @@ docker-compose exec web alembic revision --autogenerate -m "commit message"
 Run:
 docker-compose exec web alembic upgrade head
 
-
+# Documentation
+docker run --rm --network fastapi-sqlmodel-alembic_default -v ${PWD}:/work -w /work k1low/tbls doc postgresql://postgres:postgres@db:5432/foo?sslmode=disable
