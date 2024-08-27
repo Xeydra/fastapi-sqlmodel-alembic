@@ -1,31 +1,31 @@
 from fastapi import Depends, FastAPI
 from sqlmodel import select
-from sqlmodel.ext.asyncio.session import AsyncSession
-
+from sqlalchemy.orm import Session, selectinload
 from app.db import get_session
 from app.models import UserDataBase, UserQuestionBase, userQuestionModels, userDataModels
 
 app = FastAPI()
 
 @app.get("/ping")
-async def pong():
+def pong():
     return {"ping": "pong!"}
 
 
 @app.get("/userQuestions", response_model=list[UserQuestionBase])
-async def get_user_questions(session: AsyncSession = Depends(get_session)):
+def get_user_questions(session: Session = Depends(get_session)):
     all_entries = []
+    print(session)
     for model in userQuestionModels:
-        result = await session.exec(select(model))
+        result = session.query(model).options(selectinload(model.answer_set))
         all_entries.extend(result.all())
     return all_entries
 
 @app.get("/userDatas", response_model=list[UserDataBase])
-async def get_user_datas(session: AsyncSession = Depends(get_session)):
+def get_user_datas(session: Session = Depends(get_session)):
     all_entries = []
-    for model in userDataModels:
-        result = await session.exec(select(model))
-        all_entries.extend(result.all())
+    # for model in userDataModels:
+    #     result = session.exec(select(model))
+    #     all_entries.extend(result.all())
     return all_entries
 
 # @app.post("/userData", response_model=UserDataBase)

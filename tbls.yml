@@ -1,7 +1,7 @@
 # .tbls.yml
 
 # DSN (Database Source Name) to connect database
-dsn: postgresql+asyncpg://postgres:postgres@db:5432/foo
+dsn: postgresql://postgres:postgres@db:5432/foo
 
 # Path to generate document
 # Default is `dbdoc`

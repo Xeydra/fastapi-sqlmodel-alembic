@@ -1,27 +1,24 @@
 import os
-
-from sqlmodel import SQLModel
-from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.ext.asyncio import create_async_engine
-
+from sqlmodel import SQLModel, create_engine
 from sqlalchemy.orm import sessionmaker
-
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# echo: print all sql statements, probably remove in production
-# sqlmodels create engine same as sqlalchemys, just that future=true is default
-engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+# Create a synchronous engine
+engine = create_engine(DATABASE_URL, echo=True, future=True)
 
-# here all models are created
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
+# Create a sessionmaker bound to the synchronous engine
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Create tables and initialize the database
+def init_db():
+    with engine.begin() as conn:
+        SQLModel.metadata.create_all(conn)
 
-async def get_session() -> AsyncSession:
-    async_session = sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False
-    )
-    async with async_session() as session:
+# Dependency that provides a database session
+def get_session():
+    session = SessionLocal()
+    try:
         yield session
+    finally:
+        session.close()
