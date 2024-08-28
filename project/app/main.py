@@ -1,8 +1,8 @@
 from fastapi import Depends, FastAPI
 from sqlmodel import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session, selectinload, joinedload
 from app.db import get_session
-from app.models import UserDataBase, UserQuestionBase, userQuestionModels, userDataModels
+from app.models import UserDataBase, UserQuestionBase, userQuestionModels, userDataModels,UserQuestionColor, UserQuestionColorRead
 
 app = FastAPI()
 
@@ -11,13 +11,14 @@ def pong():
     return {"ping": "pong!"}
 
 
-@app.get("/userQuestions", response_model=list[UserQuestionBase])
+@app.get("/userQuestions", response_model=list[UserQuestionColorRead])
 def get_user_questions(session: Session = Depends(get_session)):
     all_entries = []
     print(session)
     for model in userQuestionModels:
-        result = session.query(model).options(selectinload(model.answer_set))
+        result = session.query(UserQuestionColor).options(joinedload(UserQuestionColor.answer_set))
         all_entries.extend(result.all())
+        print(all_entries)
     return all_entries
 
 @app.get("/userDatas", response_model=list[UserDataBase])
