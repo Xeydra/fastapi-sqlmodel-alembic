@@ -16,17 +16,16 @@ def get_user_questions(session: Session = Depends(get_session)):
     all_entries = []
     print(session)
     for model in userQuestionModels:
-        result = session.query(UserQuestionColor).options(joinedload(UserQuestionColor.answer_set))
+        result = session.query(model).options(selectinload(model.answer_set))
         all_entries.extend(result.all())
-        print(all_entries)
     return all_entries
 
 @app.get("/userDatas", response_model=list[UserDataBase])
 def get_user_datas(session: Session = Depends(get_session)):
     all_entries = []
-    # for model in userDataModels:
-    #     result = session.exec(select(model))
-    #     all_entries.extend(result.all())
+    for model in userDataModels:
+        result = session.exec(select(model))
+        all_entries.extend(result.all())
     return all_entries
 
 # @app.post("/userData", response_model=UserDataBase)

@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
+from typing import TypeVar, Generic
 #
 ##
 ### BASEMODELS
@@ -21,6 +22,21 @@ class UserDataBase(SQLModel):
     updated_at: datetime | None = Field(default=None)
     deleted_at: datetime | None = Field(default=None)
 
+
+typeAny = TypeVar("T")
+class AnswerSetBase(Generic[typeAny], SQLModel):
+    label: str | None
+    value: typeAny
+    created_at: datetime = Field(default=datetime.now(), nullable=False)
+    deleted_at: datetime | None = Field(default=None)
+
+# typeQuestion = TypeVar("A", UserQuestionBase)
+# typeUserData = TypeVar("A", UserDataBase)
+    
+# class UserQuestionBaseRead(Generic[typeQuestion, typeUserData], UserQuestionBase):
+#     answer_set: list["ColorRead"]
+#     user_datas: list["UserDataColor"]
+
 #
 ##
 ### COLORS
@@ -28,30 +44,27 @@ class UserDataBase(SQLModel):
 #
 class UserQuestionColorLink(UserQuestionAnswerSetLinkBase, table=True):
     user_question_id: int = Field(foreign_key="userquestioncolor.id", nullable=False, primary_key=True)
-    color_id: int = Field(foreign_key="color.id", nullable=False, primary_key=True)
+    answer_set_id: int = Field(foreign_key="answersetcolor.id", nullable=False, primary_key=True)
 
-class ColorBase(SQLModel):
-    label: str | None
-    color: str = Field(..., index=True, unique=True, regex=r'^#[0-9A-Fa-f]{6}$')
+class AnswerSetColorBase(AnswerSetBase[str]):
+    value: str = Field(..., index=True, unique=True, regex=r'^#[0-9A-Fa-f]{6}$')
 
-class Color(ColorBase, table=True):
+class AnswerSetColor(AnswerSetColorBase, table=True):
     id: int | None = Field(default=None, nullable=False, primary_key=True)
-    created_at: datetime = Field(default=datetime.now(), nullable=False)
-    deleted_at: datetime | None = Field(default=None)
     
     user_questions: list["UserQuestionColor"] = Relationship(back_populates="answer_set", link_model=UserQuestionColorLink)
 
-class ColorRead(ColorBase):
+class AnswerSetColorRead(AnswerSetColorBase):
     pass
 
 class UserQuestionColor(UserQuestionBase, table=True):
     id: int | None = Field(default=None, nullable=False, primary_key=True)
     
-    answer_set: list["Color"] = Relationship(back_populates="user_questions", link_model=UserQuestionColorLink)
+    answer_set: list["AnswerSetColor"] = Relationship(back_populates="user_questions", link_model=UserQuestionColorLink)
     user_datas: list["UserDataColor"] = Relationship(back_populates="user_question")
 
 class UserQuestionColorRead(UserQuestionBase):
-    answer_set: list["ColorRead"]
+    answer_set: list["AnswerSetColorRead"]
     user_datas: list["UserDataColor"]
 
 class UserDataColor(UserDataBase, table=True):
