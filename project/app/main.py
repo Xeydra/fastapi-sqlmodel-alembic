@@ -1,8 +1,8 @@
 from fastapi import Depends, FastAPI
-from sqlmodel import select
-from sqlalchemy.orm import Session, selectinload, joinedload
+from sqlmodel import select, Session
+from sqlalchemy.orm import selectinload
 from app.db import get_session
-from app.models import UserQDataBase, UserQuestionBase, userQuestionModels, userDataModels, UserQuestionBaseRead
+from app.models import UserQDataBase, AnswerSetColor, userQuestionModels, UserQDataColorCreate, UserQuestionBaseRead, UserQDataColor
 
 app = FastAPI()
 
@@ -14,19 +14,19 @@ def pong():
 @app.get("/userQuestions", response_model=list[UserQuestionBaseRead])
 def get_user_questions(session: Session = Depends(get_session)):
     all_entries = []
-    print(session)
     for model in userQuestionModels:
-        result = session.query(model).options(selectinload(model.answer_set))
+        result = session.exec(select(model).options(selectinload(model.answer_set)))
         all_entries.extend(result.all())
     return all_entries
 
-@app.get("/userDatas", response_model=list[UserQDataBase])
-def get_user_datas(session: Session = Depends(get_session)):
-    all_entries = []
-    for model in userDataModels:
-        result = session.exec(select(model))
-        all_entries.extend(result.all())
-    return all_entries
+@app.post("/userQData", response_model=UserQDataBase)
+def createUserQData(userData: UserQDataColorCreate, session: Session = Depends(get_session)):
+    answer = session.exec(select(AnswerSetColor).where(AnswerSetColor.id == userData.value)).first()
+    new_user_q_data = UserQDataColor(user_question_id = userData.user_question_id, value = answer.value, for_date = userData.for_date)
+    session.add(new_user_q_data)
+    session.commit()
+    session.refresh(new_user_q_data)
+    return new_user_q_data
 
 # @app.post("/userData", response_model=UserDataBase)
 # async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):

@@ -28,6 +28,9 @@ Get all songs: [http://localhost:8004/songs](http://localhost:8004/songs)
 docker-compose exec db psql --username=postgres --dbname=foo
 \dt
 
+# access sh in docker:
+docker-compose exec web /bin/sh
+
 # Migrations
 Create:
 docker-compose exec web alembic revision --autogenerate -m "commit message"
@@ -42,7 +45,6 @@ docker run --rm --network fastapi-sqlmodel-alembic_default -v ${PWD}:/work -w /w
 # ToDos
 23.08:
 - Create Colors & initial UserQuestion with Script
-- getting UserQuestion, is answerSet returned?
 - create UserQuestion Models & Endpoint
 - create UserData Models & Endpoint
 - get UserData Models & Endpoint
