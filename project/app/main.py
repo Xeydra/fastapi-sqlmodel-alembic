@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from sqlmodel import select, Session
 from sqlalchemy.orm import selectinload
 from app.db import get_session
-from app.models import UserQDataBase, AnswerSetColor, userQuestionModels, UserQDataColorCreate, UserQuestionBaseRead, UserQDataColor
+from app.models import UserQDataBase, AnswerSetColor, userQuestionModels, userDataModels, UserQDataColorCreate, UserQuestionBaseRead, UserQDataColor
 
 app = FastAPI()
 
@@ -27,6 +27,14 @@ def createUserQData(userData: UserQDataColorCreate, session: Session = Depends(g
     session.commit()
     session.refresh(new_user_q_data)
     return new_user_q_data
+
+@app.get("/userQData/{user_question_id}", response_model=list[UserQDataBase])
+def createUserQData(user_question_id: int, session: Session = Depends(get_session)):
+    all_entries = []
+    for model in userDataModels:
+        result = session.exec(select(model).where(model.user_question_id == user_question_id))
+        all_entries.extend(result.all())
+    return all_entries
 
 # @app.post("/userData", response_model=UserDataBase)
 # async def post_user_data(userDataCreate: UserDataColorCreate, session: AsyncSession = Depends(get_session)):
