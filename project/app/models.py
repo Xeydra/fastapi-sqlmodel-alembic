@@ -6,6 +6,8 @@ from typing import TypeVar, Generic
 ### BASEMODELS
 ##
 #
+typeAny = TypeVar("T")
+
 class UserQuestionBase(SQLModel):
     question_text: str
     created_at: datetime = Field(default=datetime.now(), nullable=False)
@@ -15,15 +17,13 @@ class UserQuestionBase(SQLModel):
 class UserQuestionAnswerSetLinkBase(SQLModel):
     pass
 
-class UserDataBase(SQLModel):
-    value: str
+class UserQDataBase(Generic[typeAny], SQLModel):
+    value: typeAny
     for_date: datetime | None = Field(default=datetime.now(), nullable=False)
     created_at: datetime = Field(default=datetime.now(), nullable=False)
     updated_at: datetime | None = Field(default=None)
     deleted_at: datetime | None = Field(default=None)
 
-
-typeAny = TypeVar("T")
 class AnswerSetBase(Generic[typeAny], SQLModel):
     label: str | None
     value: typeAny
@@ -55,15 +55,15 @@ class UserQuestionColor(UserQuestionBase, table=True):
     id: int | None = Field(default=None, nullable=False, primary_key=True)
     
     answer_set: list["AnswerSetColor"] = Relationship(back_populates="user_questions", link_model=UserQuestionColorLink)
-    user_datas: list["UserDataColor"] = Relationship(back_populates="user_question")
+    user_q_datas: list["UserQDataColor"] = Relationship(back_populates="user_question")
 
-class UserDataColor(UserDataBase, table=True):
+class UserQDataColor(UserQDataBase[str], table=True):
     id: int | None = Field(default=None, nullable=False, primary_key=True)
+    value: str = Field(..., index=True, unique=True, regex=r'^#[0-9A-Fa-f]{6}$')
 
     user_question_id: int = Field(foreign_key="userquestioncolor.id", nullable=False)
-    user_question: UserQuestionColor = Relationship(back_populates="user_datas")
-
+    user_question: UserQuestionColor = Relationship(back_populates="user_q_datas")
 
 # List of all UserQuestion Models:
 userQuestionModels: list[type[UserQuestionBase]] = [UserQuestionColor]
-userDataModels: list[type[UserDataBase]] = [UserDataColor]
+userDataModels: list[type[UserQDataBase]] = [UserQDataColor]

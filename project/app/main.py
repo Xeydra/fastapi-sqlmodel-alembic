@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from sqlmodel import select
 from sqlalchemy.orm import Session, selectinload, joinedload
 from app.db import get_session
-from app.models import UserDataBase, UserQuestionBase, userQuestionModels, userDataModels, UserQuestionBaseRead
+from app.models import UserQDataBase, UserQuestionBase, userQuestionModels, userDataModels, UserQuestionBaseRead
 
 app = FastAPI()
 
@@ -20,7 +20,7 @@ def get_user_questions(session: Session = Depends(get_session)):
         all_entries.extend(result.all())
     return all_entries
 
-@app.get("/userDatas", response_model=list[UserDataBase])
+@app.get("/userDatas", response_model=list[UserQDataBase])
 def get_user_datas(session: Session = Depends(get_session)):
     all_entries = []
     for model in userDataModels:
